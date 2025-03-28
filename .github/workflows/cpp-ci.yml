@@ -65,6 +65,13 @@ jobs:
       - name: Підрахунок рядків коду через cloc
         run: cloc src/ tests/ --md >> $GITHUB_STEP_SUMMARY
 
+      - name: Запуск cpplint через reviewdog
+        uses: reviewdog/action-cpplint@v1.9.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          level: error
+
       - name: Статичний аналіз через SonarQube
         uses: SonarSource/sonarqube-scan-action@v4
         env:
