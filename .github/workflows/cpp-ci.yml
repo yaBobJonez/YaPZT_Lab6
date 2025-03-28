@@ -27,7 +27,7 @@ jobs:
       - name: Встановлення залежностей
         run: |
           sudo apt update
-          sudo apt install -y libgtest-dev
+          sudo apt install -y libgtest-dev cloc
 
       - name: Встановлення Build Wrapper (для SonarCloud)
         uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v4
