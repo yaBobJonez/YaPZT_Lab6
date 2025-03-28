@@ -27,7 +27,7 @@ jobs:
       - name: Встановлення залежностей
         run: |
           sudo apt update
-          sudo apt install -y libgtest-dev
+          sudo apt install -y libgtest-dev cloc
 
       - name: Встановлення Build Wrapper (для SonarCloud)
         uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v4
@@ -61,6 +61,9 @@ jobs:
           name: Unit-тести
           path: build/tests/test_detail.xml
           reporter: java-junit
+
+      - name: Підрахунок рядків коду через cloc
+        run: cloc src/ tests/ --md >> $GITHUB_STEP_SUMMARY
 
       - name: Статичний аналіз через SonarQube
         uses: SonarSource/sonarqube-scan-action@v4
