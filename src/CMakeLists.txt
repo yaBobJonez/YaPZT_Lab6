@@ -1,4 +1,4 @@
-qt_add_executable(YaPZT_Lab6
+qt_add_executable(TaskList
     WIN32 MACOSX_BUNDLE
     main.cpp
     mainwindow.cpp
@@ -6,7 +6,7 @@ qt_add_executable(YaPZT_Lab6
     mainwindow.ui
 )
 
-target_link_libraries(YaPZT_Lab6
+target_link_libraries(TaskList
     PRIVATE
         Qt::Core
         Qt::Widgets
