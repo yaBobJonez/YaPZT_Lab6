@@ -6,17 +6,18 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 qt_standard_project_setup()
 
 add_subdirectory(src)
+add_subdirectory(tests)
 
 include(GNUInstallDirs)
 
-install(TARGETS YaPZT_Lab6
+install(TARGETS TaskList
     BUNDLE  DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
 qt_generate_deploy_app_script(
-    TARGET YaPZT_Lab6
+    TARGET TaskList
     OUTPUT_SCRIPT deploy_script
     NO_UNSUPPORTED_PLATFORM_ERROR
 )

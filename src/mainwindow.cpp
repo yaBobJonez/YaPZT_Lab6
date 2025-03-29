@@ -20,7 +20,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_addAction_triggered()
+void MainWindow::on_addAction_triggered() const
 {
     auto list = qobject_cast<QListView*>(QApplication::focusWidget());
     if (list == nullptr) return;
@@ -32,7 +32,7 @@ void MainWindow::on_addAction_triggered()
 }
 
 
-void MainWindow::on_editAction_triggered()
+void MainWindow::on_editAction_triggered() const
 {
     auto list = qobject_cast<QListView*>(QApplication::focusWidget());
     if (list == nullptr) return;
@@ -40,7 +40,7 @@ void MainWindow::on_editAction_triggered()
 }
 
 
-void MainWindow::on_removeAction_triggered()
+void MainWindow::on_removeAction_triggered() const
 {
     auto list = qobject_cast<QListView*>(QApplication::focusWidget());
     if (list == nullptr) return;

@@ -1,0 +1,102 @@
+name: 'CI/CD pipeline'
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, review_requested, submitted]
+    branches:
+      - develop
+      - main
+      - 'release/**'
+
+jobs:
+  build-test-analyze:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
+    steps:
+      - name: Отримання репозиторію
+        uses: actions/checkout@v4
+
+      - name: Встановлення Qt (новіша версія)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.2'
+          cache: 'true'
+      
+      - name: Встановлення залежностей
+        run: |
+          sudo apt update
+          sudo apt install -y libgtest-dev cloc
+
+      - name: Встановлення Build Wrapper (для SonarCloud)
+        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v4
+
+      - name: Збірка проєкту
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build --parallel
+
+      - name: Збереження виконуваного файлу
+        uses: actions/upload-artifact@v4
+        with:
+          name: TaskList_Demo
+          path: build/src/TaskList
+
+      - name: Запуск тестів
+        run: |
+          cd build/tests
+          ./TaskList_Tests --gtest_output=xml | tee results.txt
+        continue-on-error: true
+
+      - name: Збереження результатів тестів
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test results
+          path: build/tests/results.txt
+
+      - name: Відображення результатів тестів
+        uses: dorny/test-reporter@v2
+        with:
+          name: Unit-тести
+          path: build/tests/test_detail.xml
+          reporter: java-junit
+
+      - name: Підрахунок рядків коду через cloc
+        run: cloc src/ tests/ --md >> $GITHUB_STEP_SUMMARY
+
+      - name: Запуск cpplint через reviewdog
+        uses: reviewdog/action-cpplint@v1.9.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          level: error
+
+      - name: Статичний аналіз через SonarQube
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            --define sonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
+  review-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Перевірка наявності схваленого код-рев’ю
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            if (reviews.length === 0) return;
+
+            const approved = reviews.every(review => review.state === 'APPROVED');
+            if (!approved) {
+              core.setFailed("Код-рев’ю не схвалені");
+            }

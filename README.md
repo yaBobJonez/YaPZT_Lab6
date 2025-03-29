@@ -15,7 +15,7 @@ Creator на Fedora 41 із середовищем стільниці KDE Plasma
 |:----:|:-----:|
 | .github/workflows/ | GitHub Actions pipeline |
 | src/ | Вихідний код програми |
-| tests/ | Unit-тести **TODO** |
+| tests/ | Unit-тести на GoogleTest |
 | CMakeLists.txt | Конфігурація системи збірки CMake |
 | LICENSE.txt | Ліцензія проєкту |
 | README.md | Цей файл |
@@ -54,6 +54,9 @@ sudo apt install -y build-essential qt6-base-dev
 
 ## Збірка і запуск
 
+Для збірки клонуйте репозиторій через Git, створіть теку build/, згенеруйте у ній makefiles
+та скомпілюйте проєкт:
+
 ```sh
 git clone https://github.com/yaBobJonez/YaPZT_Lab6.git
 cd YaPZT_Lab6/
@@ -61,3 +64,6 @@ mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
+
+Запустити виконувану програму можна подвійним натисканням або через термінал:
+`./src/TaskList`. Для виконання тестів слід запускати `./tests/TaskList_Tests` у терміналі.
