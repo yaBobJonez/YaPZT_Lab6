@@ -14,15 +14,15 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 
 private slots:
-    void on_addAction_triggered();
+    void on_addAction_triggered() const;
 
-    void on_editAction_triggered();
+    void on_editAction_triggered() const;
 
-    void on_removeAction_triggered();
+    void on_removeAction_triggered() const;
 
     void on_saveAsAction_triggered();
 
